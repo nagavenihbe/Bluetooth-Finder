@@ -29,10 +29,18 @@ public class MainActivity extends AppCompatActivity {
             if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)){
                 statusTextView.setText("Finished------->");
                 searchButton.setEnabled(true);
+            }else if(BluetoothDevice.ACTION_FOUND.equals(action)){
+                BluetoothDevice device= intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                String name= device.getName();
+                String  address= device.getAddress();
+                String rssi =Integer.toString(intent.getShortExtra(BluetoothDevice.EXTRA_RSSI,Short.MIN_VALUE));
+                Log.i("Device Found", "Name" + name +" Address: "+ address+ " Rssi: "+ rssi);
+
             }
         }
     };
     public void searchClicked(View view){
+        Log.i("Button clicked","finished");
         statusTextView.setText("Searching------->");
         searchButton.setEnabled(false);
         bluetoothAdapter.startDiscovery();
