@@ -11,15 +11,21 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     ListView listView;
     TextView statusTextView;
     Button searchButton;
     BluetoothAdapter bluetoothAdapter;
+    ArrayList<String> bluetoothDevices= new ArrayList<>();
+    ArrayAdapter arrayAdapter;
+    ArrayList<String>addresses= new ArrayList<>();
     private final BroadcastReceiver broadcastReceiver= new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -36,6 +42,17 @@ public class MainActivity extends AppCompatActivity {
                 String rssi =Integer.toString(intent.getShortExtra(BluetoothDevice.EXTRA_RSSI,Short.MIN_VALUE));
                 Log.i("Device Found", "Name" + name +" Address: "+ address+ " Rssi: "+ rssi);
 
+                if(!addresses.contains(address)) {
+                    addresses.add(address);
+                    String deviceString = "";
+                    if (name == null || name.equals("")) {
+                        deviceString = address + " - RSSI " + rssi + "dBm";
+                    } else {
+                        deviceString = name + " - RSSI " + rssi + "dBm";
+                    }
+                    bluetoothDevices.add(deviceString);
+                    arrayAdapter.notifyDataSetChanged();
+                }
             }
         }
     };
@@ -43,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         Log.i("Button clicked","finished");
         statusTextView.setText("Searching------->");
         searchButton.setEnabled(false);
+        bluetoothDevices.clear();
         bluetoothAdapter.startDiscovery();
     }
     @Override
@@ -54,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         statusTextView= findViewById(R.id.statusTextView);
         searchButton= findViewById(R.id.searchButton);
         bluetoothAdapter= BluetoothAdapter.getDefaultAdapter();
+        arrayAdapter= new ArrayAdapter(this, android.R.layout.simple_list_item_1,bluetoothDevices);
 
         IntentFilter intentFilter= new IntentFilter();
         intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
