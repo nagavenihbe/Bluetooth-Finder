@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action= intent.getAction();
-            Log.i("Action", action);
+            Log.i("Action-------------------->>>>>>>>", action);
 
             if(BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)){
                 statusTextView.setText("Finished------->");
